@@ -25,6 +25,31 @@ class GramsController < ApplicationController
     end
   end
 
+  def edit
+    @gram = Gram.find_by_id(params[:id])
+    if @gram.blank?
+      render text: 'Not Found', status: :not_found
+    end
+  end
+
+  def update
+    @gram = Gram.find_by_id(params[:id])
+
+    if @gram.blank?
+      return render text: 'Not Found', status: :not_found
+    end
+
+    @gram.update_attributes(gram_params)
+
+    if @gram.valid?
+      redirect_to root_path
+    else
+      return render :edit, status: :unprocessable_entity
+    end
+  end
+
+  private
+
   def gram_params
     params.require(:gram).permit(:message)
   end
