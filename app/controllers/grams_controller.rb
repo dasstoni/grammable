@@ -1,5 +1,5 @@
 class GramsController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy]
 
   def index
 
@@ -28,7 +28,11 @@ class GramsController < ApplicationController
   def edit
     @gram = Gram.find_by_id(params[:id])
     if @gram.blank?
-      render text: 'Not Found', status: :not_found
+      return render text: 'Not Found', status: :not_found
+    end
+
+    if @gram.user != current_user
+      render text: 'Forbidden', status: :forbidden
     end
   end
 
@@ -37,6 +41,10 @@ class GramsController < ApplicationController
 
     if @gram.blank?
       return render text: 'Not Found', status: :not_found
+    end
+
+    if @gram.user != current_user
+      return render text: 'Forbidden', status: :forbidden
     end
 
     @gram.update_attributes(gram_params)
@@ -53,6 +61,10 @@ class GramsController < ApplicationController
 
     if @gram.blank?
       return render text: 'Not Found', status: :not_found
+    end
+
+    if @gram.user != current_user
+      return render text: 'Forbidden', status: :forbidden
     end
 
     @gram.destroy
